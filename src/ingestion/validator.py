@@ -27,8 +27,8 @@ PDF_MAGIC_BYTES = b"%PDF-"
 
 def sanitize_filename(filename: str) -> str:
     """Sanitiza o nome do arquivo para prevenir path traversal e caracteres inválidos."""
-    # Remove qualquer menção a diretórios ou barras
-    name = Path(filename).name
+    # Remove qualquer menção a diretórios ou barras (Windows e POSIX)
+    name = Path(filename.replace("\\", "/")).name
     # Remove caracteres não alfanuméricos exceto hífens, underlines e pontos
     clean_name = re.sub(r"[^\w\s.-]", "", name).strip()
     return clean_name or "documento.pdf"
