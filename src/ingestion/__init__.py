@@ -1,4 +1,5 @@
 """Módulo de ingestão, validação e extração estruturada de documentos PDF."""
+
 from src.ingestion.models import ExtractedPage, ExtractedTable, IngestionResult
 from src.ingestion.ocr_fallback import OCRFallbackProcessor, is_page_scanned_or_empty
 from src.ingestion.pdf_loader import PDFIngestionPipeline

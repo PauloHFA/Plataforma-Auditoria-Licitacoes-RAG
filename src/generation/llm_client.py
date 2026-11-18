@@ -106,6 +106,7 @@ class MockLLMClient(LLMClient):
     """Cliente simulado determinístico para testes unitários e CI sem chamadas de rede."""
 
     def __init__(self, predefined_response: str | dict[str, Any] | None = None) -> None:
+        self.predefined_response: str | None
         if isinstance(predefined_response, dict):
             self.predefined_response = json.dumps(predefined_response, ensure_ascii=False)
         else:
@@ -122,29 +123,35 @@ class MockLLMClient(LLMClient):
 
         # Se houver pergunta de garantia no prompt, gera resposta positiva estruturada
         if "garantia" in user_prompt.lower():
-            return json.dumps({
-                "resposta": "A garantia contratual exigida é de 5% do valor total adjudicado.",
-                "citacoes": [
-                    {
-                        "documento": "Edital",
-                        "pagina": 28,
-                        "item": "14.1",
-                        "trecho": "O percentual de garantia contratual será de 5% sobre o valor adjudicado.",
-                    }
-                ],
-                "encontrado": True,
-                "confianca": 0.95,
-                "chunk_ids": [3],
-            }, ensure_ascii=False)
+            return json.dumps(
+                {
+                    "resposta": "A garantia contratual exigida é de 5% do valor total adjudicado.",
+                    "citacoes": [
+                        {
+                            "documento": "Edital",
+                            "pagina": 28,
+                            "item": "14.1",
+                            "trecho": "O percentual de garantia contratual será de 5% sobre o valor adjudicado.",
+                        }
+                    ],
+                    "encontrado": True,
+                    "confianca": 0.95,
+                    "chunk_ids": [3],
+                },
+                ensure_ascii=False,
+            )
 
         # Caso padrão: abstenção
-        return json.dumps({
-            "resposta": "A informação não consta no edital indexado.",
-            "citacoes": [],
-            "encontrado": False,
-            "confianca": 0.0,
-            "chunk_ids": [],
-        }, ensure_ascii=False)
+        return json.dumps(
+            {
+                "resposta": "A informação não consta no edital indexado.",
+                "citacoes": [],
+                "encontrado": False,
+                "confianca": 0.0,
+                "chunk_ids": [],
+            },
+            ensure_ascii=False,
+        )
 
 
 def get_llm_client(provider: str | None = None) -> LLMClient:

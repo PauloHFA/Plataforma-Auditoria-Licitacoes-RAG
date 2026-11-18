@@ -39,6 +39,7 @@ class OCRFallbackProcessor:
         self.tesseract_available = False
         try:
             import pytesseract
+
             self.pytesseract: Any = pytesseract
             self.tesseract_available = True
         except ImportError:

@@ -6,6 +6,7 @@ from src.db.models import TipoChunk
 @dataclass
 class ExtractedTable:
     """Representação estruturada de uma tabela extraída de uma página do edital."""
+
     pagina: int
     headers: list[str]
     rows: list[list[str]]
@@ -28,7 +29,9 @@ class ExtractedTable:
             if not any(clean_cells):
                 continue
             row_line = " | ".join(clean_cells)
-            chunk_text = f"[Tabela - Pág. {self.pagina}] Cabeçalhos: {header_line} | Dados: {row_line}"
+            chunk_text = (
+                f"[Tabela - Pág. {self.pagina}] Cabeçalhos: {header_line} | Dados: {row_line}"
+            )
             chunks.append(chunk_text)
 
         return chunks
@@ -37,6 +40,7 @@ class ExtractedTable:
 @dataclass
 class ExtractedPage:
     """Conteúdo e metadados extraídos de uma página individual de um edital."""
+
     numero_pagina: int  # 1-indexed (página real do PDF)
     texto: str
     tipo: TipoChunk = TipoChunk.TEXTO
@@ -47,6 +51,7 @@ class ExtractedPage:
 @dataclass
 class IngestionResult:
     """Resultado consolidado da extração e validação de um documento PDF."""
+
     nome_arquivo: str
     hash_sha256: str
     total_paginas: int

@@ -48,8 +48,13 @@ class GroundedResponder:
         start_time = time.time()
 
         # 1. Política de Abstenção Preliminar (RN-02)
-        if not candidates or max((c.rrf_score for c in candidates), default=0.0) < MIN_RRF_SCORE_THRESHOLD:
-            logger.info("Nenhum candidato atingiu o limiar de relevância. Aplicando abstenção (RN-02).")
+        if (
+            not candidates
+            or max((c.rrf_score for c in candidates), default=0.0) < MIN_RRF_SCORE_THRESHOLD
+        ):
+            logger.info(
+                "Nenhum candidato atingiu o limiar de relevância. Aplicando abstenção (RN-02)."
+            )
             latencia_ms = int((time.time() - start_time) * 1000)
             return (
                 ChatQueryResponse(

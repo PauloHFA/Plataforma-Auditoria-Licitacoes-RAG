@@ -64,13 +64,17 @@ def test_responder_controlled_retry_on_failure():
 
     # Mock que na primeira chamada comete alucinação de página (página 999),
     # mas que em seguida será corrigido no retry
-    bad_output = json.dumps({
-        "resposta": "Deve apresentar aptidão técnica.",
-        "citacoes": [{"documento": "Edital", "pagina": 999, "item": "8.4.2", "trecho": "aptidão técnica"}],
-        "encontrado": True,
-        "confianca": 0.9,
-        "chunk_ids": [10],
-    })
+    bad_output = json.dumps(
+        {
+            "resposta": "Deve apresentar aptidão técnica.",
+            "citacoes": [
+                {"documento": "Edital", "pagina": 999, "item": "8.4.2", "trecho": "aptidão técnica"}
+            ],
+            "encontrado": True,
+            "confianca": 0.9,
+            "chunk_ids": [10],
+        }
+    )
 
     class RetryMockLLM(MockLLMClient):
         def __init__(self) -> None:
@@ -81,13 +85,15 @@ def test_responder_controlled_retry_on_failure():
             self.calls += 1
             if self.calls == 1:
                 return bad_output
-            return json.dumps({
-                "resposta": ABSTENTION_MESSAGE,
-                "citacoes": [],
-                "encontrado": False,
-                "confianca": 0.0,
-                "chunk_ids": [],
-            })
+            return json.dumps(
+                {
+                    "resposta": ABSTENTION_MESSAGE,
+                    "citacoes": [],
+                    "encontrado": False,
+                    "confianca": 0.0,
+                    "chunk_ids": [],
+                }
+            )
 
     retry_client = RetryMockLLM()
     responder = GroundedResponder(llm_client=retry_client)

@@ -98,8 +98,12 @@ class Documento(Base):
     __tablename__ = "documentos"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    edital_id: Mapped[int] = mapped_column(ForeignKey("editais.id", ondelete="CASCADE"), nullable=False, index=True)
-    tipo: Mapped[TipoDocumento] = mapped_column(Enum(TipoDocumento), default=TipoDocumento.EDITAL, nullable=False)
+    edital_id: Mapped[int] = mapped_column(
+        ForeignKey("editais.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    tipo: Mapped[TipoDocumento] = mapped_column(
+        Enum(TipoDocumento), default=TipoDocumento.EDITAL, nullable=False
+    )
     versao: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     hash_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
     caminho: Mapped[str] = mapped_column(String(500), nullable=False)
@@ -107,18 +111,24 @@ class Documento(Base):
     status: Mapped[str] = mapped_column(String(50), default="READY", nullable=False)
 
     edital: Mapped["Edital"] = relationship("Edital", back_populates="documentos")
-    chunks: Mapped[list["Chunk"]] = relationship("Chunk", back_populates="documento", cascade="all, delete-orphan")
+    chunks: Mapped[list["Chunk"]] = relationship(
+        "Chunk", back_populates="documento", cascade="all, delete-orphan"
+    )
 
 
 class Chunk(Base):
     __tablename__ = "chunks"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    documento_id: Mapped[int] = mapped_column(ForeignKey("documentos.id", ondelete="CASCADE"), nullable=False, index=True)
+    documento_id: Mapped[int] = mapped_column(
+        ForeignKey("documentos.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     pagina: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     item: Mapped[str | None] = mapped_column(String(50), nullable=True, index=True)
     secao: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    tipo: Mapped[TipoChunk] = mapped_column(Enum(TipoChunk), default=TipoChunk.TEXTO, nullable=False)
+    tipo: Mapped[TipoChunk] = mapped_column(
+        Enum(TipoChunk), default=TipoChunk.TEXTO, nullable=False
+    )
     texto: Mapped[str] = mapped_column(Text, nullable=False)
 
     # Embedding vetorial e índice full-text
@@ -128,16 +138,16 @@ class Chunk(Base):
 
     documento: Mapped["Documento"] = relationship("Documento", back_populates="chunks")
 
-    __table_args__ = (
-        Index("idx_chunks_tsv", "tsv", postgresql_using="gin"),
-    )
+    __table_args__ = (Index("idx_chunks_tsv", "tsv", postgresql_using="gin"),)
 
 
 class ConversaMensagem(Base):
     __tablename__ = "conversas_mensagens"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    edital_id: Mapped[int] = mapped_column(ForeignKey("editais.id", ondelete="CASCADE"), nullable=False, index=True)
+    edital_id: Mapped[int] = mapped_column(
+        ForeignKey("editais.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     pergunta: Mapped[str] = mapped_column(Text, nullable=False)
     resposta: Mapped[str] = mapped_column(Text, nullable=False)
     chunk_ids: Mapped[list[int] | None] = mapped_column(JSON, nullable=True)
@@ -155,8 +165,12 @@ class ChecklistIten(Base):
     __tablename__ = "checklist_itens"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    edital_id: Mapped[int] = mapped_column(ForeignKey("editais.id", ondelete="CASCADE"), nullable=False, index=True)
-    categoria: Mapped[str] = mapped_column(String(100), nullable=False, index=True)  # Jurídica, Fiscal, Técnica, etc.
+    edital_id: Mapped[int] = mapped_column(
+        ForeignKey("editais.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    categoria: Mapped[str] = mapped_column(
+        String(100), nullable=False, index=True
+    )  # Jurídica, Fiscal, Técnica, etc.
     descricao: Mapped[str] = mapped_column(Text, nullable=False)
     citacao: Mapped[str] = mapped_column(String(255), nullable=False)
     obrigatorio: Mapped[bool] = mapped_column(nullable=False, default=True)
@@ -168,7 +182,9 @@ class Alerta(Base):
     __tablename__ = "alertas"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    edital_id: Mapped[int] = mapped_column(ForeignKey("editais.id", ondelete="CASCADE"), nullable=False, index=True)
+    edital_id: Mapped[int] = mapped_column(
+        ForeignKey("editais.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     tipo: Mapped[str] = mapped_column(String(100), nullable=False)
     descricao: Mapped[str] = mapped_column(Text, nullable=False)
     item_edital: Mapped[str | None] = mapped_column(String(50), nullable=True)
@@ -182,15 +198,16 @@ class Alerta(Base):
 
 class BaseLegal(Base):
     """Índice separado para a Lei nº 14.133/2021 e legislação de apoio."""
+
     __tablename__ = "base_legal"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    norma: Mapped[str] = mapped_column(String(100), nullable=False, index=True)  # Ex: "Lei 14.133/2021"
+    norma: Mapped[str] = mapped_column(
+        String(100), nullable=False, index=True
+    )  # Ex: "Lei 14.133/2021"
     artigo: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     texto: Mapped[str] = mapped_column(Text, nullable=False)
     embedding = mapped_column(Vector(settings.EMBEDDING_DIM), nullable=True)
     tsv = mapped_column(TSVECTOR, nullable=True)
 
-    __table_args__ = (
-        Index("idx_base_legal_tsv", "tsv", postgresql_using="gin"),
-    )
+    __table_args__ = (Index("idx_base_legal_tsv", "tsv", postgresql_using="gin"),)

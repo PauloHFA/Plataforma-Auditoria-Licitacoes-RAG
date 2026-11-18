@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class LegalArticle:
     """Artigo de referência da legislação de licitações (Lei nº 14.133/2021)."""
+
     norma: str
     artigo: str
     ementa: str

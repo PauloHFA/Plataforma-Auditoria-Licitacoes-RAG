@@ -1,4 +1,3 @@
-
 from src.db.models import (
     Alerta,
     BaseLegal,

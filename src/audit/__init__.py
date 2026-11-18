@@ -1,4 +1,5 @@
 """Módulo de auditoria, checklist de habilitação, prazos e alertas da Lei 14.133/2021."""
+
 from src.audit.checklist import ChecklistExtractor
 from src.audit.deadlines import DeadlinesAndSanctionsExtractor
 from src.audit.legal_base import LEGAL_KNOWLEDGE_BASE, LegalArticle, LegalBaseCatalog

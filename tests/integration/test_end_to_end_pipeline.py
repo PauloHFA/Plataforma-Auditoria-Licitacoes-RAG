@@ -49,7 +49,9 @@ def test_end_to_end_ingestion_retrieval_and_audit():
     mock_doc.__getitem__.return_value = mock_page
 
     with patch("pymupdf.open", return_value=mock_doc):
-        ingest_result = pipeline.process_file_bytes(b"%PDF-1.4 mock bytes", filename="Edital_PE_01_2026.pdf")
+        ingest_result = pipeline.process_file_bytes(
+            b"%PDF-1.4 mock bytes", filename="Edital_PE_01_2026.pdf"
+        )
 
     assert ingest_result.sucesso is True
     assert len(ingest_result.paginas) == 1
@@ -73,18 +75,22 @@ def test_end_to_end_ingestion_retrieval_and_audit():
 
     # 3. Geração Fundamentada com Verificador de Citações
     target_cand = next(c for c in candidates if "garantia" in c.candidate.texto.lower())
-    mock_llm = MockLLMClient(predefined_response={
-        "resposta": "A garantia contratual é de 5% do valor total.",
-        "citacoes": [{
-            "documento": "Edital_PE_01_2026.pdf",
-            "pagina": target_cand.candidate.pagina,
-            "item": target_cand.candidate.item,
-            "trecho": "garantia de execução no valor correspondente a 5%",
-        }],
-        "encontrado": True,
-        "confianca": 0.95,
-        "chunk_ids": [target_cand.candidate.chunk_id],
-    })
+    mock_llm = MockLLMClient(
+        predefined_response={
+            "resposta": "A garantia contratual é de 5% do valor total.",
+            "citacoes": [
+                {
+                    "documento": "Edital_PE_01_2026.pdf",
+                    "pagina": target_cand.candidate.pagina,
+                    "item": target_cand.candidate.item,
+                    "trecho": "garantia de execução no valor correspondente a 5%",
+                }
+            ],
+            "encontrado": True,
+            "confianca": 0.95,
+            "chunk_ids": [target_cand.candidate.chunk_id],
+        }
+    )
     responder = GroundedResponder(llm_client=mock_llm)
     chat_resp, latencia_ms = responder.generate_response(
         query="qual a garantia exigida?",

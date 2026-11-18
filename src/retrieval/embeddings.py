@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import math
+import os
 from typing import Any
 
 from src.config import settings
@@ -31,9 +32,18 @@ class EmbeddingService:
 
     def _load_model(self) -> None:
         """Tenta carregar o modelo SentenceTransformers se instalado."""
+        if settings.APP_ENV == "testing" or os.getenv("PYTEST_CURRENT_TEST"):
+            logger.info("Modo de teste ativo. Operando com fallback vetorial determinístico.")
+            self.model = None
+            return
         try:
             from sentence_transformers import SentenceTransformer
-            logger.info("Carregando modelo SentenceTransformer: %s no dispositivo %s", self.model_name, self.device)
+
+            logger.info(
+                "Carregando modelo SentenceTransformer: %s no dispositivo %s",
+                self.model_name,
+                self.device,
+            )
             self.model = SentenceTransformer(self.model_name, device=self.device)
         except Exception as e:
             logger.info(

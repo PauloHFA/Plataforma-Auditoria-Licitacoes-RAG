@@ -23,9 +23,7 @@ def test_groq_client_success_and_error():
 
     mock_response = MagicMock()
     mock_response.json.return_value = {
-        "choices": [
-            {"message": {"content": '{"resposta": "ok", "encontrado": true}'}}
-        ]
+        "choices": [{"message": {"content": '{"resposta": "ok", "encontrado": true}'}}]
     }
     mock_response.raise_for_status.return_value = None
 
@@ -48,9 +46,7 @@ def test_ollama_client_success():
     client = OllamaClient(base_url="http://localhost:11434", model="llama3.1")
 
     mock_response = MagicMock()
-    mock_response.json.return_value = {
-        "message": {"content": '{"resposta": "ollama_ok"}'}
-    }
+    mock_response.json.return_value = {"message": {"content": '{"resposta": "ollama_ok"}'}}
     mock_response.raise_for_status.return_value = None
 
     with patch("httpx.Client") as mock_client_cls:
@@ -92,22 +88,30 @@ def test_citation_verifier_invalid_json_and_malformed():
     assert "Falha de formatação JSON" in (res.validation_error or "")
 
     # 2. Citação sem ser dict e sem página int
-    malformed_json = json.dumps({
-        "resposta": "Informação encontrada",
-        "encontrado": True,
-        "citacoes": ["não é dict", {"pagina": "dez", "item": "1.1"}, {"pagina": None}],
-    })
+    malformed_json = json.dumps(
+        {
+            "resposta": "Informação encontrada",
+            "encontrado": True,
+            "citacoes": ["não é dict", {"pagina": "dez", "item": "1.1"}, {"pagina": None}],
+        }
+    )
     res_malformed = verifier.verify_response(malformed_json, [cand])
     assert not res_malformed.is_valid
 
     # 3. Trecho citado não confere com a página
-    not_matching_snippet = json.dumps({
-        "resposta": "Informação encontrada",
-        "encontrado": True,
-        "citacoes": [
-            {"pagina": 10, "item": "99.99", "trecho": "Trecho completamente inexistente no contexto"}
-        ],
-    })
+    not_matching_snippet = json.dumps(
+        {
+            "resposta": "Informação encontrada",
+            "encontrado": True,
+            "citacoes": [
+                {
+                    "pagina": 10,
+                    "item": "99.99",
+                    "trecho": "Trecho completamente inexistente no contexto",
+                }
+            ],
+        }
+    )
     res_snippet = verifier.verify_response(not_matching_snippet, [cand])
     assert not res_snippet.is_valid
     assert "não confere" in (res_snippet.validation_error or "")
@@ -117,7 +121,8 @@ def test_checklist_long_description_truncation():
     """Valida truncamento de sentenças longas no checklist (> 200 caracteres)."""
     extractor = ChecklistExtractor()
     chunk = ParsedChunk(
-        texto="10.1 DA QUALIFICAÇÃO TÉCNICA: " + ("Atestado técnico expedido por órgão oficial competente com carimbo. " * 5),
+        texto="10.1 DA QUALIFICAÇÃO TÉCNICA: "
+        + ("Atestado técnico expedido por órgão oficial competente com carimbo. " * 5),
         pagina=15,
         item="10.1",
         secao="Qualificação Técnica",

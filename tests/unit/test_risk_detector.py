@@ -48,7 +48,10 @@ def test_risk_detector_strict_suggestion_language_rn05_rn07():
     # RN-07: Linguagem de sugestão, sem juízo taxativo
     assert alert.descricao.startswith("Sugestão de Revisão Humana:")
     assert "ilegal" not in alert.descricao.lower()
-    assert "possível incompatibilidade" in alert.descricao.lower() or "aparenta ser inferior" in alert.descricao.lower()
+    assert (
+        "possível incompatibilidade" in alert.descricao.lower()
+        or "aparenta ser inferior" in alert.descricao.lower()
+    )
 
     # RN-05: Citação da lei e do item
     assert "Art. 164 da Lei nº 14.133/2021" in alert.referencia_legal

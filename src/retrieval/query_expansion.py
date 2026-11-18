@@ -7,17 +7,54 @@ e o vocabulário formal de compras públicas da Lei nº 14.133/2021.
 import re
 
 LEGAL_SYNONYM_MAP: dict[str, list[str]] = {
-    "dívida": ["regularidade fiscal", "certidão negativa", "cnd", "cndt", "dívida ativa", "tributária"],
+    "dívida": [
+        "regularidade fiscal",
+        "certidão negativa",
+        "cnd",
+        "cndt",
+        "dívida ativa",
+        "tributária",
+    ],
     "negativado": ["regularidade fiscal", "crf", "fgts", "inadimplência", "cndt"],
-    "atestado": ["qualificação técnica", "capacidade técnico-operacional", "técnico-profissional", "parcelas de maior relevância"],
-    "experiência": ["atestado de capacidade técnica", "qualificação técnica", "comprovação de aptidão"],
-    "garantia": ["garantia contratual", "garantia de execução", "caução", "seguro-garantia", "fiança bancária"],
+    "atestado": [
+        "qualificação técnica",
+        "capacidade técnico-operacional",
+        "técnico-profissional",
+        "parcelas de maior relevância",
+    ],
+    "experiência": [
+        "atestado de capacidade técnica",
+        "qualificação técnica",
+        "comprovação de aptidão",
+    ],
+    "garantia": [
+        "garantia contratual",
+        "garantia de execução",
+        "caução",
+        "seguro-garantia",
+        "fiança bancária",
+    ],
     "reclamar": ["impugnação ao edital", "pedido de esclarecimento", "recurso administrativo"],
     "esclarecimento": ["pedido de esclarecimento", "impugnação", "dúvidas ao pregoeiro"],
-    "dinheiro": ["qualificação econômico-financeira", "balanço patrimonial", "patrimônio líquido", "capital social"],
+    "dinheiro": [
+        "qualificação econômico-financeira",
+        "balanço patrimonial",
+        "patrimônio líquido",
+        "capital social",
+    ],
     "capital": ["capital social mínimo", "patrimônio líquido", "qualificação econômico-financeira"],
-    "marca": ["indicação de marca", "vedação de similar", "especificação exclusiva", "equivalência"],
-    "multa": ["sanções administrativas", "penalidades", "impedimento de licitar", "declaração de inidoneidade"],
+    "marca": [
+        "indicação de marca",
+        "vedação de similar",
+        "especificação exclusiva",
+        "equivalência",
+    ],
+    "multa": [
+        "sanções administrativas",
+        "penalidades",
+        "impedimento de licitar",
+        "declaração de inidoneidade",
+    ],
     "prazo": ["dias úteis", "dias corridos", "prazo de apresentação", "impugnação", "vigência"],
 }
 

@@ -5,6 +5,7 @@ from typing import Any
 @dataclass
 class RankedCandidate:
     """Representa um chunk candidato recuperado por uma das vias de busca."""
+
     chunk_id: int
     texto: str
     pagina: int
@@ -20,6 +21,7 @@ class RankedCandidate:
 @dataclass
 class RRFScoredCandidate:
     """Candidato após aplicação da fusão Reciprocal Rank Fusion."""
+
     candidate: RankedCandidate
     rrf_score: float
     rank_vetorial: int | None = None

@@ -1,4 +1,5 @@
 """Módulo de busca híbrida (vetorial + full-text), fusão RRF e re-ranking."""
+
 from src.retrieval.embeddings import EmbeddingService
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.retrieval.reranker import CrossEncoderReranker

@@ -1,8 +1,8 @@
 import re
+from collections.abc import Sequence
+from typing import Any
 
 from src.audit.models import CategoriaHabilitacao, ExtractedChecklistItem
-from src.chunking.models import ParsedChunk
-from src.retrieval.rrf import RankedCandidate
 
 # Padrões léxicos e semânticos associados aos 4 eixos de habilitação da Lei 14.133/2021
 PATTERNS_JURIDICA = [
@@ -60,7 +60,7 @@ class ChecklistExtractor:
 
     def extract_from_chunks(
         self,
-        chunks: list[ParsedChunk | RankedCandidate],
+        chunks: Sequence[Any],
         document_name: str = "Edital",
     ) -> list[ExtractedChecklistItem]:
         """Varre os fragmentos do edital e extrai os itens exigidos com citação obrigatória."""
@@ -119,10 +119,18 @@ class ChecklistExtractor:
 
         # Classificação por pontuação de padrões no corpo do texto
         scores = {
-            CategoriaHabilitacao.JURIDICA: sum(bool(re.search(p, text_lower)) for p in PATTERNS_JURIDICA),
-            CategoriaHabilitacao.FISCAL_TRABALHISTA: sum(bool(re.search(p, text_lower)) for p in PATTERNS_FISCAL),
-            CategoriaHabilitacao.TECNICA: sum(bool(re.search(p, text_lower)) for p in PATTERNS_TECNICA),
-            CategoriaHabilitacao.ECONOMICA: sum(bool(re.search(p, text_lower)) for p in PATTERNS_ECONOMICA),
+            CategoriaHabilitacao.JURIDICA: sum(
+                bool(re.search(p, text_lower)) for p in PATTERNS_JURIDICA
+            ),
+            CategoriaHabilitacao.FISCAL_TRABALHISTA: sum(
+                bool(re.search(p, text_lower)) for p in PATTERNS_FISCAL
+            ),
+            CategoriaHabilitacao.TECNICA: sum(
+                bool(re.search(p, text_lower)) for p in PATTERNS_TECNICA
+            ),
+            CategoriaHabilitacao.ECONOMICA: sum(
+                bool(re.search(p, text_lower)) for p in PATTERNS_ECONOMICA
+            ),
         }
 
         best_category = max(scores, key=lambda k: scores[k])
@@ -153,7 +161,9 @@ class ChecklistExtractor:
     @staticmethod
     def _clean_description(desc: str) -> str:
         """Remove numerações iniciais desnecessárias e formata em sentença limpa."""
-        cleaned = re.sub(r"^([a-z]\)|\d+(?:\.\d+)*\.?|\-|\•)\s+", "", desc, flags=re.IGNORECASE).strip()
+        cleaned = re.sub(
+            r"^([a-z]\)|\d+(?:\.\d+)*\.?|\-|\•)\s+", "", desc, flags=re.IGNORECASE
+        ).strip()
         # Limita o comprimento para leitura objetiva no checklist
         if len(cleaned) > 200:
             # Corta na última pontuação antes do limite

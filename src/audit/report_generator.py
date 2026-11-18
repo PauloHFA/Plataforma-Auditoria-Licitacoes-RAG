@@ -44,7 +44,9 @@ class AuditReportGenerator:
             prazos_md.append("| Evento / Prazo | Tipo | Duração | Citação |")
             prazos_md.append("|---|---|---|---|")
             for d in deadlines:
-                prazos_md.append(f"| {d.tipo} | {d.dias_uteis_ou_corridos} | {d.prazo_valor} | `{d.citacao}` |")
+                prazos_md.append(
+                    f"| {d.tipo} | {d.dias_uteis_ou_corridos} | {d.prazo_valor} | `{d.citacao}` |"
+                )
         else:
             prazos_md.append("*Nenhum prazo explícito extraído do documento.*")
 
@@ -67,32 +69,50 @@ class AuditReportGenerator:
         # 3. Checklist de Habilitação (4 eixos)
         checklist_md = []
         if checklist:
-            checklist_md.append("| Eixo Legal | Requisito Exigido | Obrigatório | Citação de Origem |")
+            checklist_md.append(
+                "| Eixo Legal | Requisito Exigido | Obrigatório | Citação de Origem |"
+            )
             checklist_md.append("|---|---|:---:|---|")
             for item in checklist:
                 obr = "Sim" if item.obrigatorio else "Não"
-                checklist_md.append(f"| **{item.categoria}** | {item.descricao} | {obr} | `{item.citacao}` |")
+                checklist_md.append(
+                    f"| **{item.categoria}** | {item.descricao} | {obr} | `{item.citacao}` |"
+                )
         else:
             checklist_md.append("*Nenhum requisito de habilitação indexado.*")
 
         # 4. Matriz de Riscos (Lei 14.133/2021)
         riscos_md = []
         if alerts:
-            riscos_md.append("| Severidade | Tipo de Risco | Dispositivo Legal | Sugestão Preventiva | Item Edital |")
+            riscos_md.append(
+                "| Severidade | Tipo de Risco | Dispositivo Legal | Sugestão Preventiva | Item Edital |"
+            )
             riscos_md.append("|:---:|---|---|---|:---:|")
             for a in alerts:
-                sev_badge = f"🔴 {a.severidade.value}" if a.severidade.value == "alta" else f"🟡 {a.severidade.value}"
-                riscos_md.append(f"| {sev_badge} | {a.tipo} | {a.referencia_legal} | {a.descricao} | {a.item_edital} |")
+                sev_badge = (
+                    f"🔴 {a.severidade.value}"
+                    if a.severidade.value == "alta"
+                    else f"🟡 {a.severidade.value}"
+                )
+                riscos_md.append(
+                    f"| {sev_badge} | {a.tipo} | {a.referencia_legal} | {a.descricao} | {a.item_edital} |"
+                )
         else:
-            riscos_md.append("✅ *Nenhuma incompatibilidade ou inconformidade crítica detectada com base na Lei nº 14.133/2021.*")
+            riscos_md.append(
+                "✅ *Nenhuma incompatibilidade ou inconformidade crítica detectada com base na Lei nº 14.133/2021.*"
+            )
 
         # 5. Cláusulas Retificadas (se houver)
         erratas_md = []
         if diffs:
-            erratas_md.append("| Cláusula | Documento | Impacto | Redação Original | Redação Retificada (Prevalece) |")
+            erratas_md.append(
+                "| Cláusula | Documento | Impacto | Redação Original | Redação Retificada (Prevalece) |"
+            )
             erratas_md.append("|:---:|:---:|---|---|---|")
             for df in diffs:
-                erratas_md.append(f"| **{df.item}** | {df.documento_retificador} | {df.tipo_impacto} | {df.redacao_original[:60]}... | {df.redacao_retificada[:60]}... |")
+                erratas_md.append(
+                    f"| **{df.item}** | {df.documento_retificador} | {df.tipo_impacto} | {df.redacao_original[:60]}... | {df.redacao_retificada[:60]}... |"
+                )
         else:
             erratas_md.append("*Nenhum aditivo ou errata conflitante identificado.*")
 

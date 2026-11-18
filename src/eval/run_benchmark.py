@@ -117,18 +117,19 @@ class BenchmarkRunner:
 
             # Acurácia de citação
             pred_cits = [
-                {"pagina": c.pagina, "item": c.item, "trecho": c.trecho}
-                for c in chat_resp.citacoes
+                {"pagina": c.pagina, "item": c.item, "trecho": c.trecho} for c in chat_resp.citacoes
             ]
             if gold_citations:
                 citation_accs.append(calculate_citation_accuracy(pred_cits, gold_citations))
 
             # Abstenção
             absteve = not chat_resp.encontrado or not chat_resp.citacoes
-            abstention_predictions.append({
-                "deve_abster": deve_abster,
-                "absteve": absteve,
-            })
+            abstention_predictions.append(
+                {
+                    "deve_abster": deve_abster,
+                    "absteve": absteve,
+                }
+            )
 
         taxa_abstencao, taxa_falsa_recusa = evaluate_abstention(abstention_predictions)
 

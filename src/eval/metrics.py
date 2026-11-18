@@ -118,9 +118,7 @@ def evaluate_abstention(
     taxa_abstencao_correta = (
         (acertos_abstencao / total_deve_abster) if total_deve_abster > 0 else 1.0
     )
-    taxa_falsa_recusa = (
-        (falsas_recusas / total_tem_resposta) if total_tem_resposta > 0 else 0.0
-    )
+    taxa_falsa_recusa = (falsas_recusas / total_tem_resposta) if total_tem_resposta > 0 else 0.0
 
     return taxa_abstencao_correta, taxa_falsa_recusa
 
@@ -155,4 +153,3 @@ def calculate_faithfulness(
             supported += 1
 
     return supported / len(sentences)
-

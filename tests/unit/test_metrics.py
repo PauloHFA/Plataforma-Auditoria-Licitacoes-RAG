@@ -50,10 +50,10 @@ def test_citation_accuracy():
 
 def test_evaluate_abstention():
     predictions = [
-        {"deve_abster": True, "absteve": True},    # Acerto de abstenção
-        {"deve_abster": True, "absteve": False},   # Falha (inventou resposta)
+        {"deve_abster": True, "absteve": True},  # Acerto de abstenção
+        {"deve_abster": True, "absteve": False},  # Falha (inventou resposta)
         {"deve_abster": False, "absteve": False},  # Respondeu certo
-        {"deve_abster": False, "absteve": True},   # Falsa recusa
+        {"deve_abster": False, "absteve": True},  # Falsa recusa
     ]
 
     taxa_abstencao, taxa_falsa_recusa = evaluate_abstention(predictions)

@@ -17,6 +17,7 @@ class ParsedChunk:
     - confianca: 1.0 para nativo, menor para OCR.
     - metadados: dicionário flexível (versão, tipo de documento, etc.).
     """
+
     pagina: int
     texto: str
     item: str | None = None

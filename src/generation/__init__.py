@@ -1,4 +1,5 @@
 """Módulo de geração fundamentada com citação estrita e guardrails anti-alucinação."""
+
 from src.generation.citation_verifier import (
     ABSTENTION_MESSAGE,
     PostGenerationCitationVerifier,

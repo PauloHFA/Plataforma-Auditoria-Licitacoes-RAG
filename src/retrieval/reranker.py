@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 from typing import Any
 
@@ -27,8 +28,13 @@ class CrossEncoderReranker:
 
     def _load_model(self) -> None:
         """Tenta carregar o CrossEncoder se o pacote sentence_transformers estiver presente."""
+        if settings.APP_ENV == "testing" or os.getenv("PYTEST_CURRENT_TEST"):
+            logger.info("Modo de teste ativo. Utilizando avaliador léxico-semântico integrado.")
+            self.model = None
+            return
         try:
             from sentence_transformers import CrossEncoder
+
             logger.info("Carregando CrossEncoder: %s", self.model_name)
             self.model = CrossEncoder(self.model_name, device=self.device)
         except Exception as e:

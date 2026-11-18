@@ -1,12 +1,12 @@
 import re
+from collections.abc import Sequence
+from typing import Any
 
 from src.audit.models import (
     ExtractedDeadline,
     ExtractedPenalty,
     ExtractedWarranty,
 )
-from src.chunking.models import ParsedChunk
-from src.retrieval.rrf import RankedCandidate
 
 
 class DeadlinesAndSanctionsExtractor:
@@ -14,7 +14,7 @@ class DeadlinesAndSanctionsExtractor:
 
     def extract_deadlines(
         self,
-        chunks: list[ParsedChunk | RankedCandidate],
+        chunks: Sequence[Any],
         document_name: str = "Edital",
     ) -> list[ExtractedDeadline]:
         """Identifica e normaliza prazos processuais (impugnação, esclarecimentos, propostas, entrega)."""
@@ -22,10 +22,22 @@ class DeadlinesAndSanctionsExtractor:
 
         patterns = [
             ("Impugnação", r"impugn.*?(?:at[ée]\s+(\d+)|(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))"),
-            ("Esclarecimentos", r"esclarecimento.*?(?:at[ée]\s+(\d+)|(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))"),
-            ("Validade da Proposta", r"validade\s+da(s)?\s+proposta.*?(?:(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))"),
-            ("Prazo de Entrega", r"(?:prazo\s+de\s+)?entrega.*?(?:(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))"),
-            ("Garantia Contratual", r"garantia.*?(?:at[ée]\s+(\d+)|(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))"),
+            (
+                "Esclarecimentos",
+                r"esclarecimento.*?(?:at[ée]\s+(\d+)|(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))",
+            ),
+            (
+                "Validade da Proposta",
+                r"validade\s+da(s)?\s+proposta.*?(?:(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))",
+            ),
+            (
+                "Prazo de Entrega",
+                r"(?:prazo\s+de\s+)?entrega.*?(?:(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))",
+            ),
+            (
+                "Garantia Contratual",
+                r"garantia.*?(?:at[ée]\s+(\d+)|(\d+)\s*(?:dias)?|(\d+)\s*\([^\)]+\))",
+            ),
         ]
 
         for chunk in chunks:
@@ -59,7 +71,7 @@ class DeadlinesAndSanctionsExtractor:
 
     def extract_warranty(
         self,
-        chunks: list[ParsedChunk | RankedCandidate],
+        chunks: Sequence[Any],
         document_name: str = "Edital",
     ) -> ExtractedWarranty | None:
         """Localiza e extrai as condições da garantia contratual da licitação."""
@@ -73,7 +85,9 @@ class DeadlinesAndSanctionsExtractor:
                 pct = pct_match.group(1) if pct_match else "Conforme cláusula"
 
                 # Procura prazo de prestação
-                prazo_match = re.search(r"(\d+\s*(?:\([^\)]+\)\s*)?dias\s*(?:[úu]teis|corridos)?)", texto_lower)
+                prazo_match = re.search(
+                    r"(\d+\s*(?:\([^\)]+\)\s*)?dias\s*(?:[úu]teis|corridos)?)", texto_lower
+                )
                 prazo_txt = prazo_match.group(1) if prazo_match else "No ato da assinatura"
 
                 item_str = chunk.item or "S/N"
@@ -90,7 +104,7 @@ class DeadlinesAndSanctionsExtractor:
 
     def extract_penalties(
         self,
-        chunks: list[ParsedChunk | RankedCandidate],
+        chunks: Sequence[Any],
         document_name: str = "Edital",
     ) -> list[ExtractedPenalty]:
         """Extrai as sanções administrativas previstas no edital."""
@@ -104,7 +118,16 @@ class DeadlinesAndSanctionsExtractor:
             ("Declaração de Inidoneidade", r"declara[çc][ãa]o\s+de\s+inidoneidade"),
         ]
 
-        keywords = ["sanç", "sanc", "penalidade", "multa", "inidoneidade", "impedimento", "advertência", "advertencia"]
+        keywords = [
+            "sanç",
+            "sanc",
+            "penalidade",
+            "multa",
+            "inidoneidade",
+            "impedimento",
+            "advertência",
+            "advertencia",
+        ]
         for chunk in chunks:
             texto_lower = chunk.texto.lower()
             if any(k in texto_lower for k in keywords):
@@ -138,7 +161,9 @@ class DeadlinesAndSanctionsExtractor:
     @staticmethod
     def _extract_deadline_value(text_lower: str, tipo: str) -> str:
         """Extrai o número de dias ou valor sintético do prazo."""
-        match = re.search(r"(\d+)\s*(?:\([^\)]+\)\s*)?(?:dias\s*(?:[úu]teis|corridos)?|dias)", text_lower)
+        match = re.search(
+            r"(\d+)\s*(?:\([^\)]+\)\s*)?(?:dias\s*(?:[úu]teis|corridos)?|dias)", text_lower
+        )
         if match:
             return match.group(0).strip()
         return "Conforme cronograma"

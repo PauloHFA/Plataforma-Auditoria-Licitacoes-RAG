@@ -1,4 +1,5 @@
 """Módulo de persistência e banco de dados relacional e vetorial."""
+
 from src.db.models import (
     Alerta,
     Base,

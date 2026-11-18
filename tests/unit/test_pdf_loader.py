@@ -27,8 +27,7 @@ def synthetic_pdf_bytes():
     page2 = doc.new_page(width=595, height=842)
     page2.insert_text(
         (50, 72),
-        "14. DA GARANTIA CONTRATUAL\n"
-        "14.1 A garantia contratual é de 5% do valor total adjudicado.",
+        "14. DA GARANTIA CONTRATUAL\n14.1 A garantia contratual é de 5% do valor total adjudicado.",
         fontsize=11,
     )
 

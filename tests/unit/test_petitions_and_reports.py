@@ -167,7 +167,9 @@ def test_version_comparator():
         ),
     ]
 
-    diffs = VersionComparator.compare_versions(orig_chunks, errata_chunks, document_errata_name="Errata v2")
+    diffs = VersionComparator.compare_versions(
+        orig_chunks, errata_chunks, document_errata_name="Errata v2"
+    )
 
     assert len(diffs) == 2
     diff_map = {d.item: d for d in diffs}
@@ -190,7 +192,10 @@ def test_legal_query_expander():
     assert "cnd" in expanded_divida
 
     expanded_atestado = expander.expand_query("qual o atestado necessário?")
-    assert "qualificação técnica" in expanded_atestado or "capacidade técnico-operacional" in expanded_atestado
+    assert (
+        "qualificação técnica" in expanded_atestado
+        or "capacidade técnico-operacional" in expanded_atestado
+    )
 
     expanded_plain = expander.expand_query("qual o objeto do contrato?")
     assert expanded_plain == "qual o objeto do contrato?"

@@ -12,6 +12,7 @@ from src.chunking.models import ParsedChunk
 @dataclass
 class ClauseDiff:
     """Representa a diferença entre a redação original e a retificada de uma cláusula."""
+
     item: str
     pagina_original: int
     pagina_retificada: int
@@ -75,10 +76,16 @@ class VersionComparator:
 
         # 2. Garantias e Valores
         if "%" in old_l or "%" in new_l or "garantia" in old_l or "garantia" in new_l:
-            return "Financeiro / Garantia", "Modificação no percentual de garantia ou qualificação econômico-financeira."
+            return (
+                "Financeiro / Garantia",
+                "Modificação no percentual de garantia ou qualificação econômico-financeira.",
+            )
 
         # 3. Habilitação Técnica
         if "atestado" in old_l or "técnica" in old_l or "capacidade" in old_l:
-            return "Qualificação Técnica", "Alteração nas exigências de comprovação operacional ou atestados."
+            return (
+                "Qualificação Técnica",
+                "Alteração nas exigências de comprovação operacional ou atestados.",
+            )
 
         return "Procedimental", "Adequação formal ou procedimental do texto da cláusula."

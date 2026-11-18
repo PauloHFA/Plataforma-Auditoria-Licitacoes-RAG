@@ -56,7 +56,10 @@ query_expander = LegalQueryExpander()
 # Rotas do Sistema (RF-20)
 # ==========================================
 
-@system_router.get("/health", response_model=HealthResponse, summary="Verificação de Saúde do Sistema")
+
+@system_router.get(
+    "/health", response_model=HealthResponse, summary="Verificação de Saúde do Sistema"
+)
 async def health_check(db: AsyncSession = Depends(get_db_session)):
     """Verifica se a API, o banco PostgreSQL (pgvector) e o Redis estão saudáveis."""
     db_status = "ok"
@@ -97,6 +100,7 @@ async def get_metrics(db: AsyncSession = Depends(get_db_session)):
 # ==========================================
 # Rotas de Editais (RF-01 a RF-20)
 # ==========================================
+
 
 @router.post(
     "/editais",
@@ -395,7 +399,9 @@ async def delete_edital(edital_id: int, db: AsyncSession = Depends(get_db_sessio
 )
 async def get_minuta_impugnacao(
     edital_id: int,
-    razao_social: str = Query("[NOME DA EMPRESA LICITANTE]", description="Razão social da empresa impugnante"),
+    razao_social: str = Query(
+        "[NOME DA EMPRESA LICITANTE]", description="Razão social da empresa impugnante"
+    ),
     cnpj: str = Query("[00.000.000/0001-00]", description="CNPJ da empresa impugnante"),
     db: AsyncSession = Depends(get_db_session),
 ):
@@ -457,7 +463,9 @@ async def get_relatorio_auditoria(
     deadlines = deadlines_extractor.extract_deadlines(chunks)
     penalties = deadlines_extractor.extract_penalties(chunks)
     warranty = deadlines_extractor.extract_warranty(chunks)
-    checklist = checklist_extractor.extract_from_chunks(chunks, document_name=edital.numero or "Edital")
+    checklist = checklist_extractor.extract_from_chunks(
+        chunks, document_name=edital.numero or "Edital"
+    )
     alerts = risk_detector.analyze_risks(chunks, deadlines=deadlines, warranty=warranty)
 
     dossier_md = AuditReportGenerator.generate_dossier(
@@ -478,4 +486,3 @@ async def get_relatorio_auditoria(
         orgao=edital.orgao or "Órgão Licitante",
         relatorio_markdown=dossier_md,
     )
-

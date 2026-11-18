@@ -15,6 +15,7 @@ class TableExtractor:
         self.use_pdfplumber = False
         try:
             import pdfplumber  # noqa: F401
+
             self.use_pdfplumber = True
         except ImportError:
             logger.info("pdfplumber não encontrado. Usando extração nativa de tabelas do PyMuPDF.")

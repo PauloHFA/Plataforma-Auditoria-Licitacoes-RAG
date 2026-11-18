@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class VersionResolutionResult:
     """Resultado da resolução de precedência entre edital original e adendos/erratas (RN-03, CA-08)."""
+
     chunks_ativos: list[ParsedChunk]
     chunks_substituidos: list[ParsedChunk]
     itens_alterados: dict[str, str]  # item -> motivo/versão
@@ -68,16 +69,16 @@ class ErrataPrecedenceResolver:
             versao_recente = mais_recente.metadados.get("versao", 2)
             orig_doc_name = antigos[0].metadados.get("nome_arquivo", "Edital original")
 
-            aviso_retificacao = (
-                f"[Item {item_key} retificado por Errata v{versao_recente} - Prevalece sobre {orig_doc_name}] "
-            )
+            aviso_retificacao = f"[Item {item_key} retificado por Errata v{versao_recente} - Prevalece sobre {orig_doc_name}] "
 
             # Evita duplicar prefixo
             if not mais_recente.texto.startswith("[Item"):
                 mais_recente.texto = f"{aviso_retificacao}{mais_recente.texto}"
 
             mais_recente.metadados["retificado"] = True
-            mais_recente.metadados["versao_anterior_substituida"] = antigos[0].metadados.get("versao", 1)
+            mais_recente.metadados["versao_anterior_substituida"] = antigos[0].metadados.get(
+                "versao", 1
+            )
 
             itens_alterados[item_key] = f"Retificado na Errata v{versao_recente}"
             ativos.append(mais_recente)

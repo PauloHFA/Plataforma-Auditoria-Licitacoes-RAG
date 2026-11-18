@@ -30,7 +30,9 @@ class HierarchyTracker:
 
         # Extrai o título ou a primeira linha do item
         first_line = text.strip().split("\n")[0][:80].strip()
-        title = f"{clean_item}. {first_line}" if not first_line.startswith(clean_item) else first_line
+        title = (
+            f"{clean_item}. {first_line}" if not first_line.startswith(clean_item) else first_line
+        )
 
         # Remove níveis inferiores ou iguais que já foram fechados
         keys_to_remove = [k for k in self.levels if k >= level]
@@ -38,11 +40,7 @@ class HierarchyTracker:
             del self.levels[k]
 
         # Constrói o caminho dos pais (ancestrais de nível < level)
-        parent_titles = [
-            self.levels[k][1]
-            for k in sorted(self.levels.keys())
-            if k < level
-        ]
+        parent_titles = [self.levels[k][1] for k in sorted(self.levels.keys()) if k < level]
 
         # Registra o nível atual
         self.levels[level] = (clean_item, title)
@@ -214,10 +212,12 @@ class HierarchicalClauseSplitter:
         all_chunks: list[ParsedChunk] = []
 
         base_meta = dict(metadados_base or {})
-        base_meta.update({
-            "nome_arquivo": ingestion_result.nome_arquivo,
-            "hash_sha256": ingestion_result.hash_sha256,
-        })
+        base_meta.update(
+            {
+                "nome_arquivo": ingestion_result.nome_arquivo,
+                "hash_sha256": ingestion_result.hash_sha256,
+            }
+        )
 
         for page in ingestion_result.paginas:
             page_chunks = self.split_page(

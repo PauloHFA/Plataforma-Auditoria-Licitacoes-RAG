@@ -1,4 +1,5 @@
 """Harness de avaliação sistemática: Golden Dataset, métricas de RAG e benchmark CLI."""
+
 from src.eval.metrics import (
     EvaluationReport,
     calculate_citation_accuracy,

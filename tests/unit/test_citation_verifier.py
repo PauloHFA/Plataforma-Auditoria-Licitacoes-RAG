@@ -14,20 +14,22 @@ def test_verifier_accepts_valid_citation():
     )
     context = [RRFScoredCandidate(candidate=cand, rrf_score=0.03)]
 
-    valid_output = json.dumps({
-        "resposta": "A garantia contratual exigida é de 5% do valor total.",
-        "citacoes": [
-            {
-                "documento": "Edital",
-                "pagina": 28,
-                "item": "14.1",
-                "trecho": "A garantia da contratação é fixada em 5% do valor total.",
-            }
-        ],
-        "encontrado": True,
-        "confianca": 0.95,
-        "chunk_ids": [1],
-    })
+    valid_output = json.dumps(
+        {
+            "resposta": "A garantia contratual exigida é de 5% do valor total.",
+            "citacoes": [
+                {
+                    "documento": "Edital",
+                    "pagina": 28,
+                    "item": "14.1",
+                    "trecho": "A garantia da contratação é fixada em 5% do valor total.",
+                }
+            ],
+            "encontrado": True,
+            "confianca": 0.95,
+            "chunk_ids": [1],
+        }
+    )
 
     verifier = PostGenerationCitationVerifier()
     res = verifier.verify_response(valid_output, context)
@@ -50,20 +52,22 @@ def test_verifier_rejects_hallucinated_page_rn01():
     context = [RRFScoredCandidate(candidate=cand, rrf_score=0.03)]
 
     # O LLM alucina a página 99, que não foi entregue no contexto
-    hallucinated_output = json.dumps({
-        "resposta": "Deve ser apresentado atestado de capacidade técnica.",
-        "citacoes": [
-            {
-                "documento": "Edital",
-                "pagina": 99,
-                "item": "8.4",
-                "trecho": "Apresentar atestado de capacidade técnica.",
-            }
-        ],
-        "encontrado": True,
-        "confianca": 0.90,
-        "chunk_ids": [1],
-    })
+    hallucinated_output = json.dumps(
+        {
+            "resposta": "Deve ser apresentado atestado de capacidade técnica.",
+            "citacoes": [
+                {
+                    "documento": "Edital",
+                    "pagina": 99,
+                    "item": "8.4",
+                    "trecho": "Apresentar atestado de capacidade técnica.",
+                }
+            ],
+            "encontrado": True,
+            "confianca": 0.90,
+            "chunk_ids": [1],
+        }
+    )
 
     verifier = PostGenerationCitationVerifier()
     res = verifier.verify_response(hallucinated_output, context)
@@ -82,13 +86,15 @@ def test_verifier_handles_legitimate_abstention_rn02():
         )
     ]
 
-    abstention_output = json.dumps({
-        "resposta": "A informação não consta no edital indexado.",
-        "citacoes": [],
-        "encontrado": False,
-        "confianca": 0.0,
-        "chunk_ids": [],
-    })
+    abstention_output = json.dumps(
+        {
+            "resposta": "A informação não consta no edital indexado.",
+            "citacoes": [],
+            "encontrado": False,
+            "confianca": 0.0,
+            "chunk_ids": [],
+        }
+    )
 
     verifier = PostGenerationCitationVerifier()
     res = verifier.verify_response(abstention_output, context)

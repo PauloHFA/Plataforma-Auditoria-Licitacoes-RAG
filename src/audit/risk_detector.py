@@ -1,12 +1,12 @@
 import re
+from collections.abc import Sequence
+from typing import Any
 
 from src.audit.models import (
     ExtractedDeadline,
     ExtractedWarranty,
 )
-from src.chunking.models import ParsedChunk
 from src.db.models import SeveridadeAlerta
-from src.retrieval.rrf import RankedCandidate
 
 
 class RiskAlert:
@@ -37,7 +37,7 @@ class RiskDetector:
 
     def analyze_risks(
         self,
-        chunks: list[ParsedChunk | RankedCandidate],
+        chunks: Sequence[Any],
         deadlines: list[ExtractedDeadline] | None = None,
         warranty: ExtractedWarranty | None = None,
     ) -> list[RiskAlert]:
@@ -110,7 +110,11 @@ class RiskDetector:
         # 3. Auditoria de Exigências de Qualificação Econômico-Financeira (Art. 67)
         for chunk in chunks:
             texto_lower = chunk.texto.lower()
-            if "patrimônio líquido" in texto_lower or "patrimonio liquido" in texto_lower or "capital social" in texto_lower:
+            if (
+                "patrimônio líquido" in texto_lower
+                or "patrimonio liquido" in texto_lower
+                or "capital social" in texto_lower
+            ):
                 pct_match = re.search(r"(\d+(?:[\.,]\d+)?\s*%)", texto_lower)
                 if pct_match:
                     num_match = re.search(r"(\d+)", pct_match.group(1))
@@ -129,7 +133,10 @@ class RiskDetector:
                         )
 
             # 4. Auditoria de Indicação Restritiva de Marca sem Equivalência (Art. 41)
-            if re.search(r"(exclusivamente da marca|vedad[ao]\s+(?:a\s+)?(?:apresenta[çc][ãa]o|oferta)\s+de\s+(?:marca\s+)?similar|sem\s+aceita[çc][ãa]o\s+de\s+equivalente)", texto_lower):
+            if re.search(
+                r"(exclusivamente da marca|vedad[ao]\s+(?:a\s+)?(?:apresenta[çc][ãa]o|oferta)\s+de\s+(?:marca\s+)?similar|sem\s+aceita[çc][ãa]o\s+de\s+equivalente)",
+                texto_lower,
+            ):
                 alerts.append(
                     RiskAlert(
                         tipo="Restrição Indevida de Marca / Vedação de Similar",
@@ -144,7 +151,10 @@ class RiskDetector:
                 )
 
             # 5. Auditoria de Exigência Excessiva de Quantitativo em Atestado Técnico (Súmula 263/TCU)
-            atestado_match = re.search(r"(?:comprova[çc][ãa]o\s+(?:de\s+)?(?:no\s+m[íi]nimo|m[íi]nima\s+de)\s+(\d+)\s*%\s*(?:das?\s+quantidades?|do\s+quantitativo|do\s+total|do\s+objeto))", texto_lower)
+            atestado_match = re.search(
+                r"(?:comprova[çc][ãa]o\s+(?:de\s+)?(?:no\s+m[íi]nimo|m[íi]nima\s+de)\s+(\d+)\s*%\s*(?:das?\s+quantidades?|do\s+quantitativo|do\s+total|do\s+objeto))",
+                texto_lower,
+            )
             if atestado_match:
                 pct_atestado = int(atestado_match.group(1))
                 if pct_atestado > 50:

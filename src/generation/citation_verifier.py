@@ -14,6 +14,7 @@ ABSTENTION_MESSAGE = "A informação não consta no edital indexado."
 @dataclass
 class VerificationResult:
     """Resultado da validação estrita pós-geração."""
+
     is_valid: bool
     response: ChatQueryResponse
     validation_error: str | None = None
@@ -108,9 +109,9 @@ class PostGenerationCitationVerifier:
                     overlap_words = [w for w in trecho_words if w in cand_text_clean]
                     overlap_ratio = len(overlap_words) / len(trecho_words)
 
-                item_match = (
-                    cand.candidate.item and item in cand.candidate.item
-                ) or (item and item in cand.candidate.texto)
+                item_match = (cand.candidate.item and item in cand.candidate.item) or (
+                    item and item in cand.candidate.texto
+                )
 
                 if overlap_ratio >= self.fuzzy_threshold or item_match:
                     found_match = True
@@ -118,7 +119,9 @@ class PostGenerationCitationVerifier:
                     break
 
             if not found_match:
-                logger.warning("Trecho citado não localizado na página %d do contexto: %s", pag, trecho[:60])
+                logger.warning(
+                    "Trecho citado não localizado na página %d do contexto: %s", pag, trecho[:60]
+                )
                 return VerificationResult(
                     is_valid=False,
                     response=self._build_abstention_response(),

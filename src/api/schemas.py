@@ -13,7 +13,12 @@ class CitacaoItem(BaseModel):
 
 
 class ChatQueryRequest(BaseModel):
-    pergunta: str = Field(..., min_length=2, max_length=1000, description="Pergunta em linguagem natural sobre o edital")
+    pergunta: str = Field(
+        ...,
+        min_length=2,
+        max_length=1000,
+        description="Pergunta em linguagem natural sobre o edital",
+    )
 
 
 class ChatQueryResponse(BaseModel):

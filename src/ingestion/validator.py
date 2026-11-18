@@ -5,16 +5,19 @@ from pathlib import Path
 
 class FileValidationError(Exception):
     """Exceção base para erros de validação de arquivos."""
+
     pass
 
 
 class InvalidPDFMagicBytesError(FileValidationError):
     """Lançada quando os magic bytes do arquivo não correspondem a um PDF legítimo (%PDF-)."""
+
     pass
 
 
 class FileSizeExceededError(FileValidationError):
     """Lançada quando o tamanho do arquivo excede o limite permitido."""
+
     pass
 
 

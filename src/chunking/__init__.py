@@ -1,4 +1,5 @@
 """Módulo de segmentação hierárquica por cláusula."""
+
 from src.chunking.clause_splitter import (
     CLAUSE_REGEX,
     HierarchicalClauseSplitter,

@@ -71,12 +71,8 @@ class HybridRetriever:
                 {"query": query, "edital_id": edital_id, "limit": top_candidates},
             )
 
-            vector_candidates = [
-                self._row_to_candidate(row) for row in vec_res.fetchall()
-            ]
-            lexical_candidates = [
-                self._row_to_candidate(row) for row in lex_res.fetchall()
-            ]
+            vector_candidates = [self._row_to_candidate(row) for row in vec_res.fetchall()]
+            lexical_candidates = [self._row_to_candidate(row) for row in lex_res.fetchall()]
 
         except Exception as e:
             logger.error("Erro durante execução de busca híbrida no banco: %s", e)
@@ -161,7 +157,11 @@ class HybridRetriever:
         elif default_id:
             chunk_id = default_id
         else:
-            chunk_id = abs(hash((getattr(cand, "pagina", 0), getattr(cand, "item", ""), cand.texto[:30]))) % 1000000 + 1
+            chunk_id = (
+                abs(hash((getattr(cand, "pagina", 0), getattr(cand, "item", ""), cand.texto[:30])))
+                % 1000000
+                + 1
+            )
 
         doc_id = getattr(cand, "documento_id", 0)
         return RankedCandidate(
